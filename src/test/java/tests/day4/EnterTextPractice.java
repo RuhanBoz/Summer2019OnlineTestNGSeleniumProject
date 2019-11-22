@@ -34,6 +34,7 @@ public class EnterTextPractice {
         } else {
             System.out.println("Test failed");
         }
+        BrowserUtils.wait(2);
         driver.close();
     }
 }
