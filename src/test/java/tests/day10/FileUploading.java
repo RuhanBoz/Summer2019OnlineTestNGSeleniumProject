@@ -22,16 +22,15 @@ public class FileUploading {
         driver.findElement(By.linkText("File Upload")).click();
         //provide path to the file
         //insert your path to the file
-        driver.findElement(By.id("file-upload")).sendKeys("//Users/ruhan/Desktop/IdeaProjects");
+        driver.findElement(By.id("file-upload")).sendKeys("\"C:\\Users\\ruhan\\Desktop\\filename.filetype\"");
         //click submit
         driver.findElement(By.id("file-submit")).click();
         BrowserUtils.wait(4);
-        String expectedFileName = "IdeaProjects";
+        String expectedFileName = "filename.filetype";
         String actualFileName = driver.findElement(By.id("uploaded-files")).getText();
 
         Assert.assertEquals(actualFileName, expectedFileName);
     }
-
     @AfterMethod
     public void teardown(){
         driver.quit();

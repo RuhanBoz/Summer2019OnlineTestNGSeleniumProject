@@ -13,8 +13,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import utilities.BrowserFactory;
+
 import java.time.Duration;
-import java.util.NoSuchElementException;
+
+import org.openqa.selenium.NoSuchElementException;
+
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -23,31 +26,33 @@ public class WaitsPractice {
     private WebDriver driver;
 
     @BeforeMethod
-    public void setup(){
+    public void setup() {
         driver = BrowserFactory.getDriver("chrome");
         driver.get("http://practice.cybertekschool.com/");
     }
 
-    @Test
-    public void test1(){
+    @Test(description = "Implicit wait example")
+    public void test1() {
         //this line should be before all findElement() methods
+        //to wait within 10 seconds, until element is present
+        //we apply it once, and it always works
+        //put this line into @BeforeMethod and it will work for all tests
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
         driver.findElement(By.linkText("Dynamic Loading")).click();
-
         //partialLinkText we match only part of the link text
         //partialLinkText it's like contains text
+        //Example 2: Element on the page that is rendered after the trigger - link text
+        //Example 2 - only part of the link text
+        //we can use partialLinkText locator to find element by partial text
         driver.findElement(By.partialLinkText("Example 2")).click();
-
         driver.findElement(By.tagName("button")).click();
-
         //this is for "Hello World!"
         WebElement finishElement = driver.findElement(By.id("finish"));
         System.out.println(finishElement.getText());
     }
 
     @Test(description = "Explicit wait example")
-    public void test2(){
+    public void test2() {
         driver.findElement(By.linkText("Dynamic Loading")).click();
         //select Example #1 | xpath alternative: //a[contains(text(),'Example 2')]
         driver.findElement(By.partialLinkText("Example 1")).click();
@@ -72,7 +77,7 @@ public class WaitsPractice {
         WebElement passwordInputBox = driver.findElement(By.id("pwd"));
         wait.until(ExpectedConditions.visibilityOf(passwordInputBox));
         passwordInputBox.sendKeys("SuperSecretPassword");
-
+        //this is a webelement that represents submit button
         WebElement submit = driver.findElement(By.cssSelector("button[type='submit']"));
         //wait, within 10 seconds, until that button is available for click
         wait.until(ExpectedConditions.elementToBeClickable(submit));
@@ -129,18 +134,17 @@ public class WaitsPractice {
                 .pollingEvery(Duration.ofMillis(200))
                 .ignoring(NoSuchElementException.class)
                 .ignoring(ElementNotVisibleException.class);
+
         WebElement message = (WebElement) wait.until(new Function<WebDriver, WebElement>() {
             @Override
             public WebElement apply(WebDriver driver) {
                 return driver.findElement(By.id("finish"));
             }
         });
-
-
     }
 
     @AfterMethod
-    public void teardown(){
+    public void teardown() {
         driver.quit();
     }
 }

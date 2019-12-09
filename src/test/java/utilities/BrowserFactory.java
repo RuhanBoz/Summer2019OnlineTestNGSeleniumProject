@@ -6,9 +6,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class BrowserFactory {
-    public static void main(String[] args) {
 
-    }
+
     /*
        we gonna create a method
        that will return a webdriver object
@@ -26,7 +25,8 @@ public class BrowserFactory {
             WebDriverManager.firefoxdriver().setup();
             return new FirefoxDriver();
         }
-        return null;
+        WebDriverManager.chromedriver().setup();
+        return new ChromeDriver();
     }
 
 }

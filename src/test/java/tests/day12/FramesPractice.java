@@ -34,7 +34,6 @@ public class FramesPractice {
         //2. webelment driver.findElement(By.cssSelector("iframe[class='some_frame']"));
         //3. index [iframe1, iframe2, iframe3...]
         WebElement inputArea = driver.findElement(By.id("tinymce"));
-
         String expectedText= "Your content goes here.";
         String actualText = inputArea.getText();
         Assert.assertEquals(actualText, expectedText);
