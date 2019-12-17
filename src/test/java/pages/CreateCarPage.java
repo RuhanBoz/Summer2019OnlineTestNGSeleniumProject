@@ -6,7 +6,7 @@ import org.openqa.selenium.support.FindBy;
 import utilities.BrowserUtils;
 import utilities.Driver;
 
-public class CreateCarPage extends BasePage{
+public class CreateCarPage extends BasePage {
 
 
 
@@ -28,6 +28,12 @@ public class CreateCarPage extends BasePage{
     //if this locator doesn't work, use [id^='uniform-custom_entity_type_Logo_file'] > span[class='action']
     @FindBy(name = "custom_entity_type[Logo][file]")
     public WebElement logoElement;
+
+    @FindBy(name = "custom_entity_type[ModelYear]")
+    public WebElement modelYearElement;
+
+    @FindBy(name = "custom_entity_type[Color]")
+    public WebElement colorElement;
 
 
     /**

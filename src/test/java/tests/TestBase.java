@@ -5,12 +5,12 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
+import org.testng.asserts.SoftAssert;
 import utilities.BrowserUtils;
 import utilities.ConfigurationReader;
 import utilities.Driver;
 import java.io.IOException;
-//this class will be a test foundation for all test classes
-//We will put here only before and after methods
+
 //this class will be a test foundation for all test classes
 //we will put here only before and after parts
 //In this way before and after methods will be the same
@@ -23,11 +23,14 @@ public abstract class TestBase {
 // * ExtentHtmlReporter html = new ExtentHtmlReporter("Extent.html");
 // * ExtentXReporter extentx = new ExtentXReporter("localhost");
 
-    protected static ExtentReports extentReports;//storage report
-    protected static ExtentHtmlReporter extentHtmlReporter;//generate report
+    protected static ExtentReports extentReports;
     //    The ExtentHtmlReporter creates a rich standalone HTML file. It allows several
-    protected static ExtentTest extentTest;//writes  our reoort shows us our test reports
+    protected static ExtentHtmlReporter extentHtmlReporter;
     //    Defines a test. You can add logs, snapshots, assign author and categories to a test and its children.
+    protected static ExtentTest extentTest;
+
+
+    //         <parameter name="test" value="regression"></parameter>
     @BeforeTest
     @Parameters({"test", "env_url"})
     public void beforeTest(@Optional String test, @Optional String env_url) {
@@ -37,9 +40,9 @@ public abstract class TestBase {
         if (test != null) {
             reportName = test;
         }
-        String filePath=System.getProperty("user.dir") + "/test-output/report.html";
-        extentReports=new ExtentReports();
-        extentHtmlReporter=new ExtentHtmlReporter(filePath);
+        String filePath = System.getProperty("user.dir") + "/test-output/" + reportName + ".html";
+        extentReports = new ExtentReports();
+        extentHtmlReporter = new ExtentHtmlReporter(filePath);
         extentReports.attachReporter(extentHtmlReporter);
         extentHtmlReporter.config().setReportName("Vytrack Test Results");
         //system information
@@ -47,44 +50,50 @@ public abstract class TestBase {
         if (env_url != null) {
             env = env_url;
         }
-        extentReports.setSystemInfo("Environment",env);
-        extentReports.setSystemInfo("Browser",ConfigurationReader.getProperty("browser"));
-        extentReports.setSystemInfo("OS",System.getProperty("os.name"));
+        extentReports.setSystemInfo("Environment", env);
+        extentReports.setSystemInfo("Browser", ConfigurationReader.getProperty("browser"));
+        extentReports.setSystemInfo("OS", System.getProperty("os.name"));
     }
 
+
     @AfterTest
-    public void afterTest(){
-        //writes test information from the stardet reported to their output
+    public void afterTest() {
+//         Writes test information from the started reporters to their output view
         extentReports.flush();
     }
 
+    //        <parameter name="env_url" value="https://qa3.vytrack.com/"></parameter>
     @BeforeMethod
     @Parameters("env_url")
-    public void setUp(@Optional String env_url){
+    public void setup(@Optional String env_url) {
         String url = ConfigurationReader.getProperty("url");
+        //if name parameter was set, then use it
+        //if it's null that means it was not set
         if (env_url != null) {
             url = env_url;
         }
         Driver.get().get(url);
     }
-    @AfterMethod
-    public void teardown(ITestResult result){
 
-        if(result.getStatus()==ITestResult.FAILURE) {
+    //ITestResult class describes the result of a test. (in TestNG)
+    @AfterMethod
+    public void teardown(ITestResult result) {
+
+        if (result.getStatus() == ITestResult.FAILURE) {
             extentTest.fail(result.getName());
             extentTest.fail(result.getThrowable());
             try {
-           extentTest.addScreenCaptureFromPath(BrowserUtils.getScreenshot(result.getName()));
+                //BrowserUtils.getScreenshot(result.getName()) - takes screenshot and returns location of that screenshot
+                //this method throws IOException (which is checked exception)
+                //any checked exception must be handled
+                extentTest.addScreenCaptureFromPath(BrowserUtils.getScreenshot(result.getName()));
             } catch (IOException e) {
+                //print error info
                 e.printStackTrace();
             }
 
-        }else if(result.getStatus()==ITestResult.SKIP){
-            extentTest.skip("Test case was skiped:"+result.getName());
+        } else if (result.getStatus() == ITestResult.SKIP) {
+            extentTest.skip("Test case was skipped : " + result.getName());
         }
         Driver.close();
-
-    }
-
-}
-
+    }}
